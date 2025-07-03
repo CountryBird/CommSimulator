@@ -41,6 +41,8 @@
             SPortNameText = new TextBox();
             SBaudRateText = new TextBox();
             SerialLabel = new Label();
+            ConnectButton = new Button();
+            DisconnectButton = new Button();
             CommLayout.SuspendLayout();
             SerialPanel.SuspendLayout();
             SuspendLayout();
@@ -56,7 +58,7 @@
             // 
             // SendButton
             // 
-            SendButton.Location = new Point(347, 410);
+            SendButton.Location = new Point(345, 410);
             SendButton.Name = "SendButton";
             SendButton.Size = new Size(75, 23);
             SendButton.TabIndex = 4;
@@ -66,7 +68,7 @@
             // 
             // ReceiveButton
             // 
-            ReceiveButton.Location = new Point(441, 410);
+            ReceiveButton.Location = new Point(440, 410);
             ReceiveButton.Name = "ReceiveButton";
             ReceiveButton.Size = new Size(75, 23);
             ReceiveButton.TabIndex = 5;
@@ -170,11 +172,33 @@
             SerialLabel.TabIndex = 0;
             SerialLabel.Text = "Serial";
             // 
+            // ConnectButton
+            // 
+            ConnectButton.Location = new Point(530, 410);
+            ConnectButton.Name = "ConnectButton";
+            ConnectButton.Size = new Size(75, 23);
+            ConnectButton.TabIndex = 10;
+            ConnectButton.Text = "Connect";
+            ConnectButton.UseVisualStyleBackColor = true;
+            ConnectButton.Click += ConnectButton_Click;
+            // 
+            // DisconnectButton
+            // 
+            DisconnectButton.Location = new Point(621, 410);
+            DisconnectButton.Name = "DisconnectButton";
+            DisconnectButton.Size = new Size(75, 23);
+            DisconnectButton.TabIndex = 11;
+            DisconnectButton.Text = "Disconnect";
+            DisconnectButton.UseVisualStyleBackColor = true;
+            DisconnectButton.Click += DisconnectButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(DisconnectButton);
+            Controls.Add(ConnectButton);
             Controls.Add(CommLayout);
             Controls.Add(TextBox);
             Controls.Add(DataText);
@@ -204,5 +228,7 @@
         private TextBox SPortNameText;
         private TextBox SBaudRateText;
         private Label SerialLabel;
+        private Button ConnectButton;
+        private Button DisconnectButton;
     }
 }

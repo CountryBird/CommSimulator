@@ -15,6 +15,22 @@ namespace Serial
         {
             serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
         }
+        public bool isOpen()
+        {
+            return serialPort.IsOpen;
+        }
+        public void Open()
+        {
+            if (!serialPort.IsOpen)
+            {
+                serialPort.Open();
+            }
+        }
+        public void Close()
+        {
+            serialPort.Close();
+            serialPort.Dispose();
+        }
         public void Send(string data)
         {
             serialPort.Write(data);

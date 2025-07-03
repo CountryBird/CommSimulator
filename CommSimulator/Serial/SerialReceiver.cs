@@ -17,7 +17,22 @@ namespace Serial
         { 
             serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
             serialPort.DataReceived += SerialPort_DataReceived;
-            serialPort.Open();
+        }
+        public bool isOpen()
+        {
+            return serialPort.IsOpen;
+        }
+        public void Open()
+        {
+            if (!serialPort.IsOpen)
+            {
+                serialPort.Open();
+            }
+        }
+        public void Close()
+        {
+            serialPort.Close();
+            serialPort.Dispose();
         }
 
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -27,25 +42,5 @@ namespace Serial
 
             DataReceived(this,data);
         }
-
-        public void Open()
-        {
-            try
-            {
-                serialPort.Open();
-                Console.WriteLine($"COM 포트 {serialPort.PortName} 열림");
-                Console.WriteLine($"BaudRate: {serialPort.BaudRate}");
-            }
-            catch(Exception ex )
-            {
-                Console.WriteLine($"오류: {ex.Message}");
-            }
-            finally
-            {
-
-            }
-        }
-
-
     }
 }

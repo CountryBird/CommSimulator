@@ -6,6 +6,9 @@ namespace CommSimulator
 {
     public partial class MainForm : Form
     {
+
+        SerialSender serialSender;
+        SerialReceiver serialReceiver;
         public MainForm()
         {
             InitializeComponent();
@@ -13,12 +16,14 @@ namespace CommSimulator
 
         private void SendButton_Click(object sender, EventArgs e)
         {
-            if (DataText.Text != "Data") 
+            // TODO: 임시 구분 조건임
+            if (DataText.Text != "Data")
             {
                 // TODO: 임시 구분 조건임
                 if (SPortNameText.Text != "PortName" && SBaudRateText.Text != "BaudRate")
                 {
-                    SerialSender serialSender = new SerialSender(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None,8,StopBits.One);
+                    if (serialSender == null) serialSender = new SerialSender(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
+                    if(!serialSender.isOpen()) serialSender.Open();
                     serialSender.Send(DataText.Text);
                 }
             }
@@ -29,8 +34,12 @@ namespace CommSimulator
             // TODO: 임시 구분 조건임
             if (SPortNameText.Text != "PortName" && SBaudRateText.Text != "BaudRate")
             {
-                SerialReceiver serialReceiver = new SerialReceiver(SPortNameText.Text,int.Parse(SBaudRateText.Text),Parity.None,8,StopBits.One);
-                serialReceiver.DataReceived += SerialReceiver_DataReceived;
+                if (serialReceiver == null) serialReceiver = new SerialReceiver(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
+                if (!serialReceiver.isOpen())
+                {
+                    serialReceiver.DataReceived += SerialReceiver_DataReceived;
+                    serialReceiver.Open();
+                }
             }
         }
 
@@ -46,7 +55,29 @@ namespace CommSimulator
 
         private void UpdateTextBox(string receivedData)
         {
-            TextBox.AppendText(receivedData+Environment.NewLine);
+            TextBox.AppendText(receivedData + Environment.NewLine);
+        }
+
+        private void ConnectButton_Click(object sender, EventArgs e)
+        {
+            // TODO: 임시 구분 조건임
+            if (SPortNameText.Text != "PortName" && SBaudRateText.Text != "BaudRate")
+            {
+                if (serialSender == null) serialSender = new SerialSender(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
+                if (!serialSender.isOpen())  serialSender.Open();
+            }
+        }
+
+        private void DisconnectButton_Click(object sender, EventArgs e)
+        {
+            if (serialSender != null && serialSender.isOpen())
+            {
+                serialSender.Close();
+            }
+            if (serialReceiver != null && serialReceiver.isOpen())
+            {
+                serialReceiver.Close();
+            } 
         }
     }
 }
