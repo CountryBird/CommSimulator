@@ -36,10 +36,15 @@
             panel4 = new Panel();
             panel3 = new Panel();
             TCPPanel = new Panel();
+            TCPComboBox = new ComboBox();
+            TCPCheckBox = new CheckBox();
+            PortText = new TextBox();
+            IPAddressText = new TextBox();
             TCPLabel = new Label();
             SerialPanel = new Panel();
-            SPortNameText = new TextBox();
-            SBaudRateText = new TextBox();
+            SerialCheckBox = new CheckBox();
+            PortNameText = new TextBox();
+            BaudRateText = new TextBox();
             SerialLabel = new Label();
             ConnectButton = new Button();
             DisconnectButton = new Button();
@@ -121,12 +126,50 @@
             // TCPPanel
             // 
             TCPPanel.BorderStyle = BorderStyle.FixedSingle;
+            TCPPanel.Controls.Add(TCPComboBox);
+            TCPPanel.Controls.Add(TCPCheckBox);
+            TCPPanel.Controls.Add(PortText);
+            TCPPanel.Controls.Add(IPAddressText);
             TCPPanel.Controls.Add(TCPLabel);
             TCPPanel.Dock = DockStyle.Fill;
             TCPPanel.Location = new Point(307, 3);
             TCPPanel.Name = "TCPPanel";
             TCPPanel.Size = new Size(298, 188);
             TCPPanel.TabIndex = 1;
+            // 
+            // TCPComboBox
+            // 
+            TCPComboBox.FormattingEnabled = true;
+            TCPComboBox.Items.AddRange(new object[] { "Server", "Client" });
+            TCPComboBox.Location = new Point(150, 62);
+            TCPComboBox.Name = "TCPComboBox";
+            TCPComboBox.Size = new Size(121, 23);
+            TCPComboBox.TabIndex = 5;
+            // 
+            // TCPCheckBox
+            // 
+            TCPCheckBox.AutoSize = true;
+            TCPCheckBox.Location = new Point(278, 8);
+            TCPCheckBox.Name = "TCPCheckBox";
+            TCPCheckBox.Size = new Size(15, 14);
+            TCPCheckBox.TabIndex = 4;
+            TCPCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // PortText
+            // 
+            PortText.Location = new Point(12, 77);
+            PortText.Name = "PortText";
+            PortText.Size = new Size(100, 23);
+            PortText.TabIndex = 2;
+            PortText.Text = "Port";
+            // 
+            // IPAddressText
+            // 
+            IPAddressText.Location = new Point(12, 48);
+            IPAddressText.Name = "IPAddressText";
+            IPAddressText.Size = new Size(100, 23);
+            IPAddressText.TabIndex = 1;
+            IPAddressText.Text = "IPAddress";
             // 
             // TCPLabel
             // 
@@ -141,8 +184,9 @@
             // SerialPanel
             // 
             SerialPanel.BorderStyle = BorderStyle.FixedSingle;
-            SerialPanel.Controls.Add(SPortNameText);
-            SerialPanel.Controls.Add(SBaudRateText);
+            SerialPanel.Controls.Add(SerialCheckBox);
+            SerialPanel.Controls.Add(PortNameText);
+            SerialPanel.Controls.Add(BaudRateText);
             SerialPanel.Controls.Add(SerialLabel);
             SerialPanel.Dock = DockStyle.Fill;
             SerialPanel.Location = new Point(3, 3);
@@ -150,21 +194,30 @@
             SerialPanel.Size = new Size(298, 188);
             SerialPanel.TabIndex = 0;
             // 
-            // SPortNameText
+            // SerialCheckBox
             // 
-            SPortNameText.Location = new Point(25, 48);
-            SPortNameText.Name = "SPortNameText";
-            SPortNameText.Size = new Size(100, 23);
-            SPortNameText.TabIndex = 2;
-            SPortNameText.Text = "PortName";
+            SerialCheckBox.AutoSize = true;
+            SerialCheckBox.Location = new Point(278, 8);
+            SerialCheckBox.Name = "SerialCheckBox";
+            SerialCheckBox.Size = new Size(15, 14);
+            SerialCheckBox.TabIndex = 3;
+            SerialCheckBox.UseVisualStyleBackColor = true;
             // 
-            // SBaudRateText
+            // PortNameText
             // 
-            SBaudRateText.Location = new Point(25, 77);
-            SBaudRateText.Name = "SBaudRateText";
-            SBaudRateText.Size = new Size(100, 23);
-            SBaudRateText.TabIndex = 1;
-            SBaudRateText.Text = "BaudRate";
+            PortNameText.Location = new Point(25, 48);
+            PortNameText.Name = "PortNameText";
+            PortNameText.Size = new Size(100, 23);
+            PortNameText.TabIndex = 2;
+            PortNameText.Text = "PortName";
+            // 
+            // BaudRateText
+            // 
+            BaudRateText.Location = new Point(25, 77);
+            BaudRateText.Name = "BaudRateText";
+            BaudRateText.Size = new Size(100, 23);
+            BaudRateText.TabIndex = 1;
+            BaudRateText.Text = "BaudRate";
             // 
             // SerialLabel
             // 
@@ -213,6 +266,7 @@
             Text = "CommSimulator";
             CommLayout.ResumeLayout(false);
             TCPPanel.ResumeLayout(false);
+            TCPPanel.PerformLayout();
             SerialPanel.ResumeLayout(false);
             SerialPanel.PerformLayout();
             ResumeLayout(false);
@@ -229,11 +283,16 @@
         private Panel panel3;
         private Panel TCPPanel;
         private Panel SerialPanel;
-        private TextBox SPortNameText;
-        private TextBox SBaudRateText;
+        private TextBox PortNameText;
+        private TextBox BaudRateText;
         private Label SerialLabel;
         private Button ConnectButton;
         private Button DisconnectButton;
         private Label TCPLabel;
+        private TextBox PortText;
+        private TextBox IPAddressText;
+        private CheckBox TCPCheckBox;
+        private CheckBox SerialCheckBox;
+        private ComboBox TCPComboBox;
     }
 }

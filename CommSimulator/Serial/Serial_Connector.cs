@@ -7,12 +7,12 @@ using System.IO.Ports;
 
 namespace Serial
 {
-    internal class SerialConnector
+    internal class Serial_Connector
     {
         SerialPort serialPort;
-        public delegate void DataReceivedHandler(object sender, string receivedData);
-        public event DataReceivedHandler? DataReceived;
-        public SerialConnector(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
+        
+        public event Action<string>? DataReceived; // 데이터 수신
+        public Serial_Connector(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
         {
             serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
             serialPort.DataReceived += SerialPort_DataReceived;
@@ -21,14 +21,14 @@ namespace Serial
         {
             return serialPort.IsOpen;
         }
-        public void Open()
+        public void Connect()
         {
             if (!serialPort.IsOpen)
             {
                 serialPort.Open();
             }
         }
-        public void Close()
+        public void DisConnect()
         {
             serialPort.Close();
             serialPort.Dispose();
@@ -39,7 +39,7 @@ namespace Serial
             SerialPort sp = (SerialPort)sender;
             string data = sp.ReadExisting();
 
-            if (DataReceived != null) DataReceived(this, data);
+            DataReceived?.Invoke(data);
         }
         public void Send(string data)
         {
