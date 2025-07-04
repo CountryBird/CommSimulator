@@ -4,21 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
-using System.Diagnostics;
 
 namespace Serial
 {
-    internal class SerialReceiver
+    internal class SerialConnector
     {
         SerialPort serialPort;
         public delegate void DataReceivedHandler(object sender, string receivedData);
-        public event DataReceivedHandler DataReceived;
-        public SerialReceiver(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
-        { 
+        public event DataReceivedHandler? DataReceived;
+        public SerialConnector(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
+        {
             serialPort = new SerialPort(portName, baudRate, parity, dataBits, stopBits);
             serialPort.DataReceived += SerialPort_DataReceived;
         }
-        public bool isOpen()
+        public bool IsOpen()
         {
             return serialPort.IsOpen;
         }
@@ -40,7 +39,11 @@ namespace Serial
             SerialPort sp = (SerialPort)sender;
             string data = sp.ReadExisting();
 
-            DataReceived(this,data);
+            if (DataReceived != null) DataReceived(this, data);
+        }
+        public void Send(string data)
+        {
+            serialPort.Write(data);
         }
     }
 }

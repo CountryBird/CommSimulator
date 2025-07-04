@@ -30,13 +30,13 @@
         {
             ButtonLabel = new Label();
             SendButton = new Button();
-            ReceiveButton = new Button();
             DataText = new TextBox();
             TextBox = new TextBox();
             CommLayout = new TableLayoutPanel();
             panel4 = new Panel();
             panel3 = new Panel();
-            panel2 = new Panel();
+            TCPPanel = new Panel();
+            TCPLabel = new Label();
             SerialPanel = new Panel();
             SPortNameText = new TextBox();
             SBaudRateText = new TextBox();
@@ -44,6 +44,7 @@
             ConnectButton = new Button();
             DisconnectButton = new Button();
             CommLayout.SuspendLayout();
+            TCPPanel.SuspendLayout();
             SerialPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -66,18 +67,9 @@
             SendButton.UseVisualStyleBackColor = true;
             SendButton.Click += SendButton_Click;
             // 
-            // ReceiveButton
-            // 
-            ReceiveButton.Location = new Point(440, 410);
-            ReceiveButton.Name = "ReceiveButton";
-            ReceiveButton.Size = new Size(75, 23);
-            ReceiveButton.TabIndex = 5;
-            ReceiveButton.Text = "Receive";
-            ReceiveButton.UseVisualStyleBackColor = true;
-            ReceiveButton.Click += ReceiveButton_Click;
-            // 
             // DataText
             // 
+            DataText.ForeColor = SystemColors.WindowFrame;
             DataText.Location = new Point(12, 410);
             DataText.Name = "DataText";
             DataText.Size = new Size(304, 23);
@@ -101,7 +93,7 @@
             CommLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CommLayout.Controls.Add(panel4, 1, 1);
             CommLayout.Controls.Add(panel3, 0, 1);
-            CommLayout.Controls.Add(panel2, 1, 0);
+            CommLayout.Controls.Add(TCPPanel, 1, 0);
             CommLayout.Controls.Add(SerialPanel, 0, 0);
             CommLayout.Dock = DockStyle.Fill;
             CommLayout.Location = new Point(0, 0);
@@ -126,12 +118,25 @@
             panel3.Size = new Size(200, 100);
             panel3.TabIndex = 2;
             // 
-            // panel2
+            // TCPPanel
             // 
-            panel2.Location = new Point(307, 3);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(200, 100);
-            panel2.TabIndex = 1;
+            TCPPanel.BorderStyle = BorderStyle.FixedSingle;
+            TCPPanel.Controls.Add(TCPLabel);
+            TCPPanel.Dock = DockStyle.Fill;
+            TCPPanel.Location = new Point(307, 3);
+            TCPPanel.Name = "TCPPanel";
+            TCPPanel.Size = new Size(298, 188);
+            TCPPanel.TabIndex = 1;
+            // 
+            // TCPLabel
+            // 
+            TCPLabel.BorderStyle = BorderStyle.FixedSingle;
+            TCPLabel.Font = new Font("휴먼둥근헤드라인", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 129);
+            TCPLabel.Location = new Point(0, 0);
+            TCPLabel.Name = "TCPLabel";
+            TCPLabel.Size = new Size(78, 21);
+            TCPLabel.TabIndex = 0;
+            TCPLabel.Text = "TCP";
             // 
             // SerialPanel
             // 
@@ -202,12 +207,12 @@
             Controls.Add(CommLayout);
             Controls.Add(TextBox);
             Controls.Add(DataText);
-            Controls.Add(ReceiveButton);
             Controls.Add(SendButton);
             Controls.Add(ButtonLabel);
             Name = "MainForm";
             Text = "CommSimulator";
             CommLayout.ResumeLayout(false);
+            TCPPanel.ResumeLayout(false);
             SerialPanel.ResumeLayout(false);
             SerialPanel.PerformLayout();
             ResumeLayout(false);
@@ -217,18 +222,18 @@
         #endregion
         private Label ButtonLabel;
         private Button SendButton;
-        private Button ReceiveButton;
         private TextBox DataText;
         private TextBox TextBox;
         private TableLayoutPanel CommLayout;
         private Panel panel4;
         private Panel panel3;
-        private Panel panel2;
+        private Panel TCPPanel;
         private Panel SerialPanel;
         private TextBox SPortNameText;
         private TextBox SBaudRateText;
         private Label SerialLabel;
         private Button ConnectButton;
         private Button DisconnectButton;
+        private Label TCPLabel;
     }
 }

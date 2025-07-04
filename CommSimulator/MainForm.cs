@@ -1,14 +1,13 @@
 using Serial;
 using System.Diagnostics;
 using System.IO.Ports;
+using System.Text.RegularExpressions;
 
 namespace CommSimulator
 {
     public partial class MainForm : Form
     {
-
-        SerialSender serialSender;
-        SerialReceiver serialReceiver;
+        SerialConnector? serialConnector;
         public MainForm()
         {
             InitializeComponent();
@@ -19,27 +18,47 @@ namespace CommSimulator
             // TODO: 임시 구분 조건임
             if (DataText.Text != "Data")
             {
-                // TODO: 임시 구분 조건임
-                if (SPortNameText.Text != "PortName" && SBaudRateText.Text != "BaudRate")
+                if(CheckSerialCondition(SPortNameText.Text,SBaudRateText.Text)) 
                 {
-                    if (serialSender == null) serialSender = new SerialSender(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
-                    if(!serialSender.isOpen()) serialSender.Open();
-                    serialSender.Send(DataText.Text);
+                    try
+                    {
+                        if (serialConnector == null) serialConnector = new SerialConnector(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
+                        if (!serialConnector.IsOpen()) serialConnector.Open();
+                        serialConnector.Send(DataText.Text);
+                        TextBox.AppendText("[S] " + DataText.Text + Environment.NewLine);
+                    }
+                    catch(IOException)
+                    {
+                        MessageBox.Show("해당 COM 포트가 연결되어 있지 않습니다.");
+                    }
+                }
+            }
+        }
+        private void ConnectButton_Click(object sender, EventArgs e)
+        {
+            if (CheckSerialCondition(SPortNameText.Text, SBaudRateText.Text))
+            {
+                try
+                {
+                    if (serialConnector == null) serialConnector = new SerialConnector(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
+                    if (!serialConnector.IsOpen())
+                    {
+                        serialConnector.DataReceived += SerialReceiver_DataReceived;
+                        serialConnector.Open();
+                    }
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show("해당 COM 포트가 연결되어 있지 않습니다.");
                 }
             }
         }
 
-        private void ReceiveButton_Click(object sender, EventArgs e)
+        private void DisconnectButton_Click(object sender, EventArgs e)
         {
-            // TODO: 임시 구분 조건임
-            if (SPortNameText.Text != "PortName" && SBaudRateText.Text != "BaudRate")
+            if (serialConnector != null && serialConnector.IsOpen())
             {
-                if (serialReceiver == null) serialReceiver = new SerialReceiver(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
-                if (!serialReceiver.isOpen())
-                {
-                    serialReceiver.DataReceived += SerialReceiver_DataReceived;
-                    serialReceiver.Open();
-                }
+                serialConnector.Close();
             }
         }
 
@@ -55,29 +74,22 @@ namespace CommSimulator
 
         private void UpdateTextBox(string receivedData)
         {
-            TextBox.AppendText(receivedData + Environment.NewLine);
+            TextBox.AppendText("[R] "+ receivedData + Environment.NewLine);
         }
 
-        private void ConnectButton_Click(object sender, EventArgs e)
+        private bool CheckSerialCondition(string portName, string baudRate)
         {
-            // TODO: 임시 구분 조건임
-            if (SPortNameText.Text != "PortName" && SBaudRateText.Text != "BaudRate")
+            if (!Regex.IsMatch(portName,@"^COM\d+$")) // COM으로 시작하고 숫자로 긑남
             {
-                if (serialSender == null) serialSender = new SerialSender(SPortNameText.Text, int.Parse(SBaudRateText.Text), Parity.None, 8, StopBits.One);
-                if (!serialSender.isOpen())  serialSender.Open();
+                MessageBox.Show("PortName이 Serial Port 양식에 맞지 않습니다.");
+                return false;
             }
-        }
-
-        private void DisconnectButton_Click(object sender, EventArgs e)
-        {
-            if (serialSender != null && serialSender.isOpen())
+            else if (!int.TryParse(baudRate, out _))
             {
-                serialSender.Close();
+                MessageBox.Show("BaudRate는 정수로 구성되어야 합니다.");
+                return false;
             }
-            if (serialReceiver != null && serialReceiver.isOpen())
-            {
-                serialReceiver.Close();
-            } 
+            return true;
         }
     }
 }
