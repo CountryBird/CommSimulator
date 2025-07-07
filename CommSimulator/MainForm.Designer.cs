@@ -87,6 +87,7 @@
             TextBox.Location = new Point(608, 0);
             TextBox.Multiline = true;
             TextBox.Name = "TextBox";
+            TextBox.ReadOnly = true;
             TextBox.Size = new Size(192, 388);
             TextBox.TabIndex = 8;
             // 

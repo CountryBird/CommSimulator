@@ -23,7 +23,7 @@ namespace TCP
         {
             await tcpClient.ConnectAsync(iPAddress, port);
             networkStream = tcpClient.GetStream();
-            ServerConnected?.Invoke(iPAddress.ToString());
+            ServerConnected?.Invoke(iPAddress.MapToIPv4().ToString());
 
             _ = TCPClient_DataReceivedAsync();
         }

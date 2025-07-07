@@ -2,6 +2,7 @@ using Serial;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Net;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using TCP;
 
@@ -20,10 +21,7 @@ namespace CommSimulator
 
         private async void SendButton_Click(object sender, EventArgs e)
         {
-            // TODO: 임시 구분 조건임
-            if (DataText.Text != "Data")
-            {
-                if (SerialCheckBox.Checked) // Serial
+            if (SerialCheckBox.Checked) // Serial
                 {
                     if (CheckSerialCondition(PortNameText.Text, BaudRateText.Text))
                     {
@@ -46,29 +44,28 @@ namespace CommSimulator
                         }
                     }
                 }
-                else if (TCPCheckBox.Checked) // TCP
+            else if (TCPCheckBox.Checked) // TCP
+            {
+                if(TCPComboBox.Text == "Server")
                 {
-                    if(TCPComboBox.Text == "Server")
-                    {
-                        if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
-                        if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
+                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                    if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
 
-                        else
-                        {
-                            await tcp_Server.Send(DataText.Text);
-                            TextBox.AppendText($"[S] [{IPAddressText.Text}] " + DataText.Text + Environment.NewLine);
-                        }
+                    else
+                    {
+                        await tcp_Server.Send(DataText.Text);
+                        UpdateTextBox($"[S] [{IPAddressText.Text}] " + DataText.Text);
                     }
-                    else if (TCPComboBox.Text == "Client")
-                    {
-                        if (tcp_Client == null) tcp_Client = new TCP_Client();
-                        if (!tcp_Client.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
+                }
+                else if (TCPComboBox.Text == "Client")
+                {
+                    if (tcp_Client == null) tcp_Client = new TCP_Client();
+                    if (!tcp_Client.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
 
-                        else
-                        {
-                            await tcp_Client.Send(DataText.Text);
-                            TextBox.AppendText($"[S] [{tcp_Client.GetLocalIPAddress()}]" + DataText.Text + Environment.NewLine);
-                        }
+                    else
+                    {
+                        await tcp_Client.Send(DataText.Text);
+                        UpdateTextBox($"[S] [{tcp_Client.GetLocalIPAddress()}] " + DataText.Text);
                     }
                 }
             }
@@ -94,31 +91,40 @@ namespace CommSimulator
                     }
                 }
             }
-            else if (TCPCheckBox.Checked)
+            else if (TCPCheckBox.Checked) // TCP
             {
-                if(TCPComboBox.Text == "Server")
+                try
                 {
-                    if(tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text),int.Parse(PortText.Text));
-                    tcp_Server.DataReceived += Tcp_DataReceived;
-                    await tcp_Server.Connect();
+                    if (TCPComboBox.Text == "Server")
+                    {
+                        if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                        tcp_Server.DataReceived += Tcp_DataReceived;
+                        tcp_Server.ClientConnected += Tcp_Connected;
+                        await tcp_Server.Connect();
+                    }
+                    else if (TCPComboBox.Text == "Client")
+                    {
+                        if (tcp_Client == null) tcp_Client = new TCP_Client();
+                        tcp_Client.DataReceived += Tcp_DataReceived;
+                        tcp_Client.ServerConnected += Tcp_Connected;
+                        await tcp_Client.Connect(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                    }
                 }
-                else if(TCPComboBox.Text == "Client")
+                catch (SocketException)
                 {
-                    if (tcp_Client == null) tcp_Client = new TCP_Client();
-                    tcp_Client.DataReceived += Tcp_DataReceived;
-                    await tcp_Client.Connect(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                    MessageBox.Show("해당 주소로 연결할 수 없습니다.");
                 }
             }
         }
 
+        private void Tcp_Connected(string remoteEndPoint)
+        {
+            UpdateTextBox($"[{remoteEndPoint}]에 연결됨");
+        }
+
         private void Tcp_DataReceived(string remoteEndPoint, string receivedData)
         {
-            if (TextBox.InvokeRequired)
-            {
-                TextBox.Invoke(new Action(() =>
-                UpdateTextBox($"[{remoteEndPoint}] {receivedData}")));
-            }
-            UpdateTextBox($"[{remoteEndPoint}] {receivedData}");
+            UpdateTextBox($"[R] [{remoteEndPoint}] {receivedData}");
         }
 
         private void DisconnectButton_Click(object sender, EventArgs e)
@@ -141,17 +147,18 @@ namespace CommSimulator
 
         private void SerialConnector_DataReceived(string receivedData)
         {
+            UpdateTextBox("[R] "+ receivedData);
+        }
+
+        private void UpdateTextBox(string data)
+        {
             if (TextBox.InvokeRequired)
             {
                 TextBox.Invoke(new Action(() =>
-                UpdateTextBox(receivedData)));
+                    TextBox.AppendText(data + Environment.NewLine)));
             }
-            else UpdateTextBox(receivedData);
-        }
-
-        private void UpdateTextBox(string receivedData)
-        {
-            TextBox.AppendText("[R] "+ receivedData + Environment.NewLine);
+            else
+                TextBox.AppendText(data + Environment.NewLine);
         }
 
         private bool CheckSerialCondition(string portName, string baudRate)
