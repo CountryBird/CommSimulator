@@ -14,7 +14,7 @@ namespace TCP
         NetworkStream? networkStream;
         public event Action<string>? ServerConnected; // 서버 연결 해제
         public event Action<string>? ClientDisconnected; // 클라이언트 연결 해제
-        public event Action<string>? ServerDisconnecteed; // 서버 연결 해제
+        public event Action<string>? ServerDisconnected; // 서버 연결 해제
         public event Action<string,string>? DataReceived;
 
         public TCP_Client()
@@ -37,7 +37,6 @@ namespace TCP
             if (networkStream != null)
             {
                 networkStream.Close();
-                networkStream.Dispose();
             }
 
             if (tcpClient != null)
@@ -85,7 +84,7 @@ namespace TCP
                 DataReceived?.Invoke(remoteEndPoint, receivedMessage);
             }
 
-            ServerDisconnecteed?.Invoke(GetRemoteIPAddress());
+            ServerDisconnected?.Invoke(GetRemoteIPAddress());
         }
 
         public async Task Send(string data)

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace TCP
 {
-    internal class TCP_Server
+    internal class TCP_Server 
     {
         TcpListener tcpListener;
         ConcurrentDictionary<string,TcpClient> connectedClients = new ConcurrentDictionary<string,TcpClient>();
@@ -29,20 +29,23 @@ namespace TCP
         public async Task Connect()
         {
             tcpListener.Start();
-
-            while (true)
-            {
-                TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
-                IPEndPoint? ipEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
-                if (ipEndPoint != null)
+            //try
+            //{
+                while (true)
                 {
-                    string remoteEndPoint = ipEndPoint.Address.ToString();
-                    ClientConnected?.Invoke(remoteEndPoint);
-                    connectedClients.TryAdd(remoteEndPoint, tcpClient);
+                    TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
+                    IPEndPoint? ipEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
+                    if (ipEndPoint != null)
+                    {
+                        string remoteEndPoint = ipEndPoint.Address.ToString();
+                        ClientConnected?.Invoke(remoteEndPoint);
+                        connectedClients.TryAdd(remoteEndPoint, tcpClient);
 
-                    _ = TCPServer_DataReceivedAsync(tcpClient);
+                        _ = TCPServer_DataReceivedAsync(tcpClient);
+                    }
                 }
-            }
+            //}
+            //catch (SocketException) { } // 서버가 통신을 끊는 경우
         }
 
         public void DisConnect()
@@ -56,10 +59,11 @@ namespace TCP
                 {
                     ServerDisconnected?.Invoke(clientIP);
                     tcpClient.Close();
-                    tcpClient.Dispose();
                     connectedClients.TryRemove(clientIP, out _);
                 }
             }
+
+            tcpListener.Dispose();
         }
 
         public async Task Send(string data)
@@ -97,7 +101,7 @@ namespace TCP
             int byteRead;
             IPEndPoint? iPEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
 
-            while ((byteRead = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+            while (tcpClient.Connected && (byteRead = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0)
             {
                 string receivedMessage = Encoding.UTF8.GetString(buffer,0,byteRead);
                 if (iPEndPoint != null)

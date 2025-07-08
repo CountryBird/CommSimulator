@@ -93,30 +93,30 @@ namespace CommSimulator
             }
             else if (TCPCheckBox.Checked) // TCP
             {
-                try
+                if (TCPComboBox.Text == "Server")
                 {
-                    if (TCPComboBox.Text == "Server")
-                    {
-                        if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
-                        tcp_Server.DataReceived += Tcp_DataReceived;
-                        tcp_Server.ClientConnected += Tcp_Connected;
-                        tcp_Server.ClientDisconnected += Tcp_Disconnected;
-                        tcp_Server.ServerDisconnected += Tcp_Disconnected;
-                        await tcp_Server.Connect();
-                    }
-                    else if (TCPComboBox.Text == "Client")
+                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                    tcp_Server.DataReceived += Tcp_DataReceived;
+                    tcp_Server.ClientConnected += Tcp_Connected;
+                    tcp_Server.ClientDisconnected += Tcp_Disconnected;
+                    tcp_Server.ServerDisconnected += Tcp_Disconnected;
+                    await tcp_Server.Connect();
+                }
+                else if (TCPComboBox.Text == "Client")
+                {
+                    try
                     {
                         if (tcp_Client == null) tcp_Client = new TCP_Client();
                         tcp_Client.DataReceived += Tcp_DataReceived;
                         tcp_Client.ServerConnected += Tcp_Connected;
-                        tcp_Client.ServerDisconnecteed += Tcp_Disconnected;
+                        tcp_Client.ServerDisconnected += Tcp_Disconnected;
                         tcp_Client.ClientDisconnected += Tcp_Disconnected;
                         await tcp_Client.Connect(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
                     }
-                }
-                catch (SocketException)
-                {
-                    MessageBox.Show("해당 주소로 연결할 수 없습니다.");
+                    catch (SocketException)
+                    {
+                        MessageBox.Show("해당 주소로 연결할 수 없습니다.");
+                    }
                 }
             }
         }
@@ -140,11 +140,12 @@ namespace CommSimulator
                     serialConnector.DisConnect();
                 }
             }
-            else if (TCPCheckBox.Checked)
+            else if (TCPCheckBox.Checked) // TCP
             {
                 if(TCPComboBox.Text == "Server" && tcp_Server != null && tcp_Server.IsConnected())
                 {
                     tcp_Server.DisConnect();
+                    tcp_Server = null;
                 }
                 if(TCPComboBox.Text == "Client" && tcp_Client != null && tcp_Client.IsConnected())
                 {
