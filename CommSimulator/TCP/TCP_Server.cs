@@ -16,6 +16,7 @@ namespace TCP
         // 연결된 클라이언트
 
         public event Action<string>? ClientConnected; // 클라이언트 연결
+        public event Action<string>? ServerDisconnected; // 서버 연결 해제
         public event Action<string>? ClientDisconnected; // 클라이언트 연결 해제
 
         public event Action<string, string>? DataReceived; // 데이터 수신
@@ -53,6 +54,7 @@ namespace TCP
 
                 if (tcpClient != null && tcpClient.Connected)
                 {
+                    ServerDisconnected?.Invoke(clientIP);
                     tcpClient.Close();
                     tcpClient.Dispose();
                     connectedClients.TryRemove(clientIP, out _);
@@ -93,16 +95,22 @@ namespace TCP
             NetworkStream stream = tcpClient.GetStream();
             byte[] buffer = new byte[1024];
             int byteRead;
+            IPEndPoint? iPEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
 
             while ((byteRead = await stream.ReadAsync(buffer, 0, buffer.Length)) != 0)
             {
                 string receivedMessage = Encoding.UTF8.GetString(buffer,0,byteRead);
-                IPEndPoint? iPEndPoint = tcpClient.Client.RemoteEndPoint as IPEndPoint;
                 if (iPEndPoint != null)
                 {
                     string remoteEndPoint = iPEndPoint.Address.ToString();
                     DataReceived?.Invoke(remoteEndPoint, receivedMessage);
                 }
+            }
+
+            if(iPEndPoint != null)
+            {
+                string remoteEndPoint = iPEndPoint.Address.ToString();
+                ClientDisconnected?.Invoke(remoteEndPoint);
             }
         }
     }
