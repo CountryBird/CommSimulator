@@ -150,6 +150,7 @@ namespace CommSimulator
                 if(TCPComboBox.Text == "Client" && tcp_Client != null && tcp_Client.IsConnected())
                 {
                     tcp_Client.Disconnect();
+                    tcp_Client = null;
                 }
             }
         }

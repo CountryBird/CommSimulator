@@ -23,11 +23,15 @@ namespace TCP
         }
         public async Task Connect(IPAddress iPAddress,int port)
         {
-            await tcpClient.ConnectAsync(iPAddress, port);
-            networkStream = tcpClient.GetStream();
-            ServerConnected?.Invoke(iPAddress.MapToIPv4().ToString());
+            try
+            {
+                await tcpClient.ConnectAsync(iPAddress, port);
+                networkStream = tcpClient.GetStream();
+                ServerConnected?.Invoke(iPAddress.MapToIPv4().ToString());
 
-            _ = TCPClient_DataReceivedAsync();
+                _ = TCPClient_DataReceivedAsync();
+            }
+            catch (SocketException) { } // 클라이언트가 직접 연결을 끊는 경우
         }
 
         public void Disconnect()
@@ -39,10 +43,9 @@ namespace TCP
                 networkStream.Close();
             }
 
-            if (tcpClient != null)
+            if(tcpClient != null)
             {
                 tcpClient.Close();
-                tcpClient.Dispose();
             }
         }
 

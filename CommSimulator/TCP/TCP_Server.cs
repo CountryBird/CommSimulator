@@ -29,8 +29,8 @@ namespace TCP
         public async Task Connect()
         {
             tcpListener.Start();
-            //try
-            //{
+            try
+            {
                 while (true)
                 {
                     TcpClient tcpClient = await tcpListener.AcceptTcpClientAsync();
@@ -44,8 +44,8 @@ namespace TCP
                         _ = TCPServer_DataReceivedAsync(tcpClient);
                     }
                 }
-            //}
-            //catch (SocketException) { } // 서버가 통신을 끊는 경우
+            }
+            catch (SocketException) { } // 서버가 연결을 직접 끊는 경우
         }
 
         public void DisConnect()
@@ -63,7 +63,7 @@ namespace TCP
                 }
             }
 
-            tcpListener.Dispose();
+            tcpListener.Stop();
         }
 
         public async Task Send(string data)
