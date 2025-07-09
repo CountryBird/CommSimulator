@@ -109,7 +109,7 @@ namespace CommSimulator
                         if (tcp_Client == null) tcp_Client = new TCP_Client();
                         tcp_Client.DataReceived += Tcp_DataReceived;
                         tcp_Client.ServerConnected += Tcp_Connected;
-                        tcp_Client.ServerDisconnected += Tcp_Disconnected;
+                        tcp_Client.ServerDisconnected += Tcp_Client_ServerDisconnected;
                         tcp_Client.ClientDisconnected += Tcp_Disconnected;
                         await tcp_Client.Connect(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
                     }
@@ -121,6 +121,7 @@ namespace CommSimulator
             }
         }
 
+        
         private void Tcp_Connected(string remoteEndPoint)
         {
             UpdateTextBox($"[{remoteEndPoint}]에 연결됨");
@@ -158,6 +159,11 @@ namespace CommSimulator
         private void Tcp_Disconnected(string remoteEndPoint)
         {
             UpdateTextBox($"[{remoteEndPoint}] 와의 연결 해제");
+        }
+        private void Tcp_Client_ServerDisconnected(string remoteEndPoint)  // 서버가 연결을 끊는 경우, 클라이언트는 연결할 곳이 없어 자체적으로 연결 해제
+        {
+            if(tcp_Client != null) tcp_Client.Disconnect();
+            tcp_Client = null;
         }
 
         private void SerialConnector_DataReceived(string receivedData)

@@ -111,7 +111,7 @@ namespace TCP
                 }
             }
 
-            if(iPEndPoint != null)
+            if(iPEndPoint != null) // 클라이언트가 연결을 끊는 경우
             {
                 string remoteEndPoint = iPEndPoint.Address.ToString();
                 ClientDisconnected?.Invoke(remoteEndPoint);
