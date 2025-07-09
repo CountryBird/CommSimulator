@@ -48,13 +48,13 @@ namespace CommSimulator
             {
                 if(TCPComboBox.Text == "Server")
                 {
-                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
                     if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
 
                     else
                     {
                         await tcp_Server.Send(DataText.Text);
-                        UpdateTextBox($"[S] [{IPAddressText.Text}] " + DataText.Text);
+                        UpdateTextBox($"[S] [{TCPIPAddressText.Text}] " + DataText.Text);
                     }
                 }
                 else if (TCPComboBox.Text == "Client")
@@ -95,7 +95,7 @@ namespace CommSimulator
             {
                 if (TCPComboBox.Text == "Server")
                 {
-                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
                     tcp_Server.DataReceived += Tcp_DataReceived;
                     tcp_Server.ClientConnected += Tcp_Connected;
                     tcp_Server.ClientDisconnected += Tcp_Disconnected;
@@ -111,7 +111,7 @@ namespace CommSimulator
                         tcp_Client.ServerConnected += Tcp_Connected;
                         tcp_Client.ServerDisconnected += Tcp_Client_ServerDisconnected;
                         tcp_Client.ClientDisconnected += Tcp_Disconnected;
-                        await tcp_Client.Connect(IPAddress.Parse(IPAddressText.Text), int.Parse(PortText.Text));
+                        await tcp_Client.Connect(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
                     }
                     catch (SocketException)
                     {
@@ -158,7 +158,7 @@ namespace CommSimulator
 
         private void Tcp_Disconnected(string remoteEndPoint)
         {
-            UpdateTextBox($"[{remoteEndPoint}] 와의 연결 해제");
+            UpdateTextBox($"[{remoteEndPoint}]와의 연결 해제");
         }
         private void Tcp_Client_ServerDisconnected(string remoteEndPoint)  // 서버가 연결을 끊는 경우, 클라이언트는 연결할 곳이 없어 자체적으로 연결 해제
         {

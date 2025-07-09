@@ -34,12 +34,16 @@
             TextBox = new TextBox();
             CommLayout = new TableLayoutPanel();
             panel4 = new Panel();
-            panel3 = new Panel();
+            UDPPanel = new Panel();
+            UDPCheckBox = new CheckBox();
+            UDPPortText = new TextBox();
+            UDPIPAddressText = new TextBox();
+            UDPLabel = new Label();
             TCPPanel = new Panel();
             TCPComboBox = new ComboBox();
             TCPCheckBox = new CheckBox();
-            PortText = new TextBox();
-            IPAddressText = new TextBox();
+            TCPPortText = new TextBox();
+            TCPIPAddressText = new TextBox();
             TCPLabel = new Label();
             SerialPanel = new Panel();
             SerialCheckBox = new CheckBox();
@@ -49,6 +53,7 @@
             ConnectButton = new Button();
             DisconnectButton = new Button();
             CommLayout.SuspendLayout();
+            UDPPanel.SuspendLayout();
             TCPPanel.SuspendLayout();
             SerialPanel.SuspendLayout();
             SuspendLayout();
@@ -98,7 +103,7 @@
             CommLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CommLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CommLayout.Controls.Add(panel4, 1, 1);
-            CommLayout.Controls.Add(panel3, 0, 1);
+            CommLayout.Controls.Add(UDPPanel, 0, 1);
             CommLayout.Controls.Add(TCPPanel, 1, 0);
             CommLayout.Controls.Add(SerialPanel, 0, 0);
             CommLayout.Dock = DockStyle.Fill;
@@ -117,20 +122,61 @@
             panel4.Size = new Size(200, 100);
             panel4.TabIndex = 3;
             // 
-            // panel3
+            // UDPPanel
             // 
-            panel3.Location = new Point(3, 197);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(200, 100);
-            panel3.TabIndex = 2;
+            UDPPanel.BorderStyle = BorderStyle.FixedSingle;
+            UDPPanel.Controls.Add(UDPCheckBox);
+            UDPPanel.Controls.Add(UDPPortText);
+            UDPPanel.Controls.Add(UDPIPAddressText);
+            UDPPanel.Controls.Add(UDPLabel);
+            UDPPanel.Dock = DockStyle.Fill;
+            UDPPanel.Location = new Point(3, 197);
+            UDPPanel.Name = "UDPPanel";
+            UDPPanel.Size = new Size(298, 188);
+            UDPPanel.TabIndex = 2;
+            // 
+            // UDPCheckBox
+            // 
+            UDPCheckBox.AutoSize = true;
+            UDPCheckBox.Location = new Point(278, 8);
+            UDPCheckBox.Name = "UDPCheckBox";
+            UDPCheckBox.Size = new Size(15, 14);
+            UDPCheckBox.TabIndex = 5;
+            UDPCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // UDPPortText
+            // 
+            UDPPortText.Location = new Point(25, 77);
+            UDPPortText.Name = "UDPPortText";
+            UDPPortText.Size = new Size(100, 23);
+            UDPPortText.TabIndex = 3;
+            UDPPortText.Text = "Port";
+            // 
+            // UDPIPAddressText
+            // 
+            UDPIPAddressText.Location = new Point(25, 48);
+            UDPIPAddressText.Name = "UDPIPAddressText";
+            UDPIPAddressText.Size = new Size(100, 23);
+            UDPIPAddressText.TabIndex = 2;
+            UDPIPAddressText.Text = "IPAddress";
+            // 
+            // UDPLabel
+            // 
+            UDPLabel.BorderStyle = BorderStyle.FixedSingle;
+            UDPLabel.Font = new Font("휴먼둥근헤드라인", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 129);
+            UDPLabel.Location = new Point(0, 0);
+            UDPLabel.Name = "UDPLabel";
+            UDPLabel.Size = new Size(78, 21);
+            UDPLabel.TabIndex = 1;
+            UDPLabel.Text = "UDP";
             // 
             // TCPPanel
             // 
             TCPPanel.BorderStyle = BorderStyle.FixedSingle;
             TCPPanel.Controls.Add(TCPComboBox);
             TCPPanel.Controls.Add(TCPCheckBox);
-            TCPPanel.Controls.Add(PortText);
-            TCPPanel.Controls.Add(IPAddressText);
+            TCPPanel.Controls.Add(TCPPortText);
+            TCPPanel.Controls.Add(TCPIPAddressText);
             TCPPanel.Controls.Add(TCPLabel);
             TCPPanel.Dock = DockStyle.Fill;
             TCPPanel.Location = new Point(307, 3);
@@ -142,7 +188,7 @@
             // 
             TCPComboBox.FormattingEnabled = true;
             TCPComboBox.Items.AddRange(new object[] { "Server", "Client" });
-            TCPComboBox.Location = new Point(150, 62);
+            TCPComboBox.Location = new Point(159, 62);
             TCPComboBox.Name = "TCPComboBox";
             TCPComboBox.Size = new Size(121, 23);
             TCPComboBox.TabIndex = 5;
@@ -156,21 +202,21 @@
             TCPCheckBox.TabIndex = 4;
             TCPCheckBox.UseVisualStyleBackColor = true;
             // 
-            // PortText
+            // TCPPortText
             // 
-            PortText.Location = new Point(12, 77);
-            PortText.Name = "PortText";
-            PortText.Size = new Size(100, 23);
-            PortText.TabIndex = 2;
-            PortText.Text = "Port";
+            TCPPortText.Location = new Point(25, 77);
+            TCPPortText.Name = "TCPPortText";
+            TCPPortText.Size = new Size(100, 23);
+            TCPPortText.TabIndex = 2;
+            TCPPortText.Text = "Port";
             // 
-            // IPAddressText
+            // TCPIPAddressText
             // 
-            IPAddressText.Location = new Point(12, 48);
-            IPAddressText.Name = "IPAddressText";
-            IPAddressText.Size = new Size(100, 23);
-            IPAddressText.TabIndex = 1;
-            IPAddressText.Text = "IPAddress";
+            TCPIPAddressText.Location = new Point(25, 48);
+            TCPIPAddressText.Name = "TCPIPAddressText";
+            TCPIPAddressText.Size = new Size(100, 23);
+            TCPIPAddressText.TabIndex = 1;
+            TCPIPAddressText.Text = "IPAddress";
             // 
             // TCPLabel
             // 
@@ -266,6 +312,8 @@
             Name = "MainForm";
             Text = "CommSimulator";
             CommLayout.ResumeLayout(false);
+            UDPPanel.ResumeLayout(false);
+            UDPPanel.PerformLayout();
             TCPPanel.ResumeLayout(false);
             TCPPanel.PerformLayout();
             SerialPanel.ResumeLayout(false);
@@ -281,7 +329,7 @@
         private TextBox TextBox;
         private TableLayoutPanel CommLayout;
         private Panel panel4;
-        private Panel panel3;
+        private Panel UDPPanel;
         private Panel TCPPanel;
         private Panel SerialPanel;
         private TextBox PortNameText;
@@ -290,10 +338,14 @@
         private Button ConnectButton;
         private Button DisconnectButton;
         private Label TCPLabel;
-        private TextBox PortText;
-        private TextBox IPAddressText;
+        private TextBox TCPPortText;
+        private TextBox TCPIPAddressText;
         private CheckBox TCPCheckBox;
         private CheckBox SerialCheckBox;
         private ComboBox TCPComboBox;
+        private Label UDPLabel;
+        private TextBox UDPPortText;
+        private TextBox UDPIPAddressText;
+        private CheckBox UDPCheckBox;
     }
 }
