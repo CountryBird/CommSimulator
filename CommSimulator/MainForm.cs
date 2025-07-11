@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using TCP;
+using UDP;
 
 namespace CommSimulator
 {
@@ -13,6 +14,7 @@ namespace CommSimulator
         Serial_Connector? serialConnector;
         TCP_Server? tcp_Server;
         TCP_Client? tcp_Client;
+        UDP_Transceiver? udp_Transceiver;
 
         public MainForm()
         {
@@ -69,6 +71,12 @@ namespace CommSimulator
                     }
                 }
             }
+            else if (UDPCheckBox.Checked) // UDP
+            {
+                if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
+                await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text),int.Parse(UDPPortText.Text),DataText.Text);
+                UpdateTextBox($"[S] [{UDPIPAddressText.Text}] "+DataText.Text);
+            }
         }
         private async void ConnectButton_Click(object sender, EventArgs e)
         {
@@ -119,17 +127,17 @@ namespace CommSimulator
                     }
                 }
             }
+            else if (UDPCheckBox.Checked) // UDP
+            {
+                if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
+                udp_Transceiver.DataReceived += Udp_DataReceived;
+                await udp_Transceiver.Connect();
+            }
         }
 
-        
         private void Tcp_Connected(string remoteEndPoint)
         {
             UpdateTextBox($"[{remoteEndPoint}]¿¡ ¿¬°áµÊ");
-        }
-
-        private void Tcp_DataReceived(string remoteEndPoint, string receivedData)
-        {
-            UpdateTextBox($"[R] [{remoteEndPoint}] {receivedData}");
         }
 
         private void DisconnectButton_Click(object sender, EventArgs e)
@@ -154,6 +162,14 @@ namespace CommSimulator
                     tcp_Client = null;
                 }
             }
+            else if (UDPCheckBox.Checked) // UDP
+            {
+                if(udp_Transceiver != null)
+                {
+                    udp_Transceiver.Disconnect();
+                    udp_Transceiver = null;
+                }
+            }
         }
 
         private void Tcp_Disconnected(string remoteEndPoint)
@@ -169,6 +185,15 @@ namespace CommSimulator
         private void SerialConnector_DataReceived(string receivedData)
         {
             UpdateTextBox("[R] "+ receivedData);
+        }
+        private void Tcp_DataReceived(string remoteEndPoint, string receivedData)
+        {
+            UpdateTextBox($"[R] [{remoteEndPoint}] {receivedData}");
+        }
+
+        private void Udp_DataReceived(string remoteEndPoint, string receivedData)
+        {
+            UpdateTextBox($"[R] [{remoteEndPoint}] {receivedData}");
         }
 
         private void UpdateTextBox(string data)
