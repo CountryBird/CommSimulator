@@ -24,31 +24,31 @@ namespace CommSimulator
         private async void SendButton_Click(object sender, EventArgs e)
         {
             if (SerialCheckBox.Checked) // Serial
+            {
+                if (CheckSerialCondition(PortNameText.Text, BaudRateText.Text))
                 {
-                    if (CheckSerialCondition(PortNameText.Text, BaudRateText.Text))
+                    try
                     {
-                        try
+                        if (serialConnector == null) serialConnector = new Serial_Connector(PortNameText.Text, int.Parse(BaudRateText.Text), Parity.None, 8, StopBits.One);
+                        if (!serialConnector.IsOpen())
                         {
-                            if (serialConnector == null) serialConnector = new Serial_Connector(PortNameText.Text, int.Parse(BaudRateText.Text), Parity.None, 8, StopBits.One);
-                            if (!serialConnector.IsOpen())
-                            {
-                                MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
-                            }
-                            else
-                            {
-                                serialConnector.Send(DataText.Text);
-                                TextBox.AppendText("[S] " + DataText.Text + Environment.NewLine);
-                            }
+                            MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
                         }
-                        catch (IOException)
+                        else
                         {
-                            MessageBox.Show("해당 COM 포트가 연결되어 있지 않습니다.");
+                            serialConnector.Send(DataText.Text);
+                            TextBox.AppendText("[S] " + DataText.Text + Environment.NewLine);
                         }
                     }
+                    catch (IOException)
+                    {
+                        MessageBox.Show("해당 COM 포트가 연결되어 있지 않습니다.");
+                    }
                 }
+            }
             else if (TCPCheckBox.Checked) // TCP
             {
-                if(TCPComboBox.Text == "Server")
+                if (TCPComboBox.Text == "Server")
                 {
                     if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
                     if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
@@ -74,8 +74,8 @@ namespace CommSimulator
             else if (UDPCheckBox.Checked) // UDP
             {
                 if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
-                await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text),int.Parse(UDPPortText.Text),DataText.Text);
-                UpdateTextBox($"[S] [{UDPIPAddressText.Text}] "+DataText.Text);
+                await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text), DataText.Text);
+                UpdateTextBox($"[S] [{UDPIPAddressText.Text}] " + DataText.Text);
             }
         }
         private async void ConnectButton_Click(object sender, EventArgs e)
@@ -91,6 +91,8 @@ namespace CommSimulator
                         {
                             serialConnector.DataReceived += SerialConnector_DataReceived;
                             serialConnector.Connect();
+
+                            SendButton.Enabled = true;
                         }
                     }
                     catch (IOException)
@@ -103,43 +105,51 @@ namespace CommSimulator
             {
                 if (TCPComboBox.Text == "Server")
                 {
-                    // TODO: IP 주소나 port 입력 안되는 경우 추가
-                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
-                    tcp_Server.DataReceived += Tcp_DataReceived;
-                    tcp_Server.ClientConnected += Tcp_Connected;
-                    tcp_Server.ClientDisconnected += Tcp_Disconnected;
-                    tcp_Server.ServerDisconnected += Tcp_Disconnected;
-                    await tcp_Server.Connect();
+                    if (CheckIPCondition(TCPIPAddressText.Text,TCPPortText.Text))
+                    {
+                        if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
+                        tcp_Server.DataReceived += Tcp_DataReceived;
+                        tcp_Server.ClientConnected += Tcp_Connected;
+                        tcp_Server.ClientDisconnected += Tcp_Disconnected;
+                        tcp_Server.ServerDisconnected += Tcp_Disconnected;
+                        await tcp_Server.Connect(); 
+                    }
                 }
                 else if (TCPComboBox.Text == "Client")
                 {
-                    try
+                    if (CheckIPCondition(TCPIPAddressText.Text,TCPPortText.Text))
                     {
-                        if (tcp_Client == null) tcp_Client = new TCP_Client();
-                        tcp_Client.DataReceived += Tcp_DataReceived;
-                        tcp_Client.ServerConnected += Tcp_Connected;
-                        tcp_Client.ServerDisconnected += Tcp_Client_ServerDisconnected;
-                        tcp_Client.ClientDisconnected += Tcp_Disconnected;
-                        await tcp_Client.Connect(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
-                    }
-                    catch (SocketException)
-                    {
-                        MessageBox.Show("해당 주소로 연결할 수 없습니다.");
+                        try
+                        {
+                            if (tcp_Client == null) tcp_Client = new TCP_Client();
+                            tcp_Client.DataReceived += Tcp_DataReceived;
+                            tcp_Client.ServerConnected += Tcp_Connected;
+                            tcp_Client.ServerDisconnected += Tcp_Client_ServerDisconnected;
+                            tcp_Client.ClientDisconnected += Tcp_Disconnected;
+                            await tcp_Client.Connect(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
+                        }
+                        catch (SocketException)
+                        {
+                            MessageBox.Show("해당 주소로 연결할 수 없습니다.");
+                        } 
                     }
                 }
             }
             else if (UDPCheckBox.Checked) // UDP
             {
-                // TODO: IP 주소나 port 입력 안되는 경우 추가
-                if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text),int.Parse(UDPPortText.Text));
-                udp_Transceiver.DataReceived += Udp_DataReceived;
-                await udp_Transceiver.Connect();
+                if (CheckIPCondition(UDPIPAddressText.Text,UDPPortText.Text))
+                {
+                    if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text));
+                    udp_Transceiver.DataReceived += Udp_DataReceived;
+                    await udp_Transceiver.Connect(); 
+                }
             }
         }
 
         private void Tcp_Connected(string remoteEndPoint)
         {
             UpdateTextBox($"[{remoteEndPoint}]에 연결됨");
+            SendButton.Enabled = true;
         }
 
         private void DisconnectButton_Click(object sender, EventArgs e)
@@ -153,12 +163,12 @@ namespace CommSimulator
             }
             else if (TCPCheckBox.Checked) // TCP
             {
-                if(TCPComboBox.Text == "Server" && tcp_Server != null && tcp_Server.IsConnected())
+                if (TCPComboBox.Text == "Server" && tcp_Server != null && tcp_Server.IsConnected())
                 {
                     tcp_Server.DisConnect();
                     tcp_Server = null;
                 }
-                if(TCPComboBox.Text == "Client" && tcp_Client != null && tcp_Client.IsConnected())
+                if (TCPComboBox.Text == "Client" && tcp_Client != null && tcp_Client.IsConnected())
                 {
                     tcp_Client.Disconnect();
                     tcp_Client = null;
@@ -166,7 +176,7 @@ namespace CommSimulator
             }
             else if (UDPCheckBox.Checked) // UDP
             {
-                if(udp_Transceiver != null)
+                if (udp_Transceiver != null)
                 {
                     udp_Transceiver.Disconnect();
                     udp_Transceiver = null;
@@ -180,13 +190,13 @@ namespace CommSimulator
         }
         private void Tcp_Client_ServerDisconnected(string remoteEndPoint)  // 서버가 연결을 끊는 경우, 클라이언트는 연결할 곳이 없어 자체적으로 연결 해제
         {
-            if(tcp_Client != null) tcp_Client.Disconnect();
+            if (tcp_Client != null) tcp_Client.Disconnect();
             tcp_Client = null;
         }
 
         private void SerialConnector_DataReceived(string receivedData)
         {
-            UpdateTextBox("[R] "+ receivedData);
+            UpdateTextBox("[R] " + receivedData);
         }
         private void Tcp_DataReceived(string remoteEndPoint, string receivedData)
         {
@@ -211,7 +221,7 @@ namespace CommSimulator
 
         private bool CheckSerialCondition(string portName, string baudRate)
         {
-            if (!Regex.IsMatch(portName,@"^COM\d+$")) // COM으로 시작하고 숫자로 긑남
+            if (!Regex.IsMatch(portName, @"^COM\d+$")) // COM으로 시작하고 숫자로 긑남
             {
                 MessageBox.Show("PortName이 Serial Port 양식에 맞지 않습니다.");
                 return false;
@@ -222,6 +232,31 @@ namespace CommSimulator
                 return false;
             }
             return true;
+        }
+
+        private bool CheckIPCondition(string ip, string port)
+        {
+            if(!IPAddress.TryParse(ip, out _))
+            {
+                MessageBox.Show("IP가 주소 양식에 맞지 않습니다.");
+                return false;
+            }
+            else if(!int.TryParse(port, out _))
+            {
+                MessageBox.Show("Port는 정수로 구성되어야 합니다.");
+                return false;
+            }
+                return true;
+        }
+
+        private void SerialCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SendButton.Enabled = !SerialCheckBox.Checked;
+        }
+
+        private void TCPCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            SendButton.Enabled= !TCPCheckBox.Checked;
         }
     }
 }

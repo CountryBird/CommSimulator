@@ -201,6 +201,7 @@
             TCPCheckBox.Size = new Size(15, 14);
             TCPCheckBox.TabIndex = 4;
             TCPCheckBox.UseVisualStyleBackColor = true;
+            TCPCheckBox.CheckedChanged += TCPCheckBox_CheckedChanged;
             // 
             // TCPPortText
             // 
@@ -249,6 +250,7 @@
             SerialCheckBox.Size = new Size(15, 14);
             SerialCheckBox.TabIndex = 3;
             SerialCheckBox.UseVisualStyleBackColor = true;
+            SerialCheckBox.CheckedChanged += SerialCheckBox_CheckedChanged;
             // 
             // PortNameText
             // 
