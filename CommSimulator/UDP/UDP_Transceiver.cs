@@ -27,16 +27,20 @@ namespace UDP
         {
             connected = true;
 
-            while (true)
+            try
             {
-                UdpReceiveResult udpReceiveResult = await udpClient.ReceiveAsync();
+                while (true)
+                {
+                    UdpReceiveResult udpReceiveResult = await udpClient.ReceiveAsync();
 
-                IPEndPoint remoteEndPoint = udpReceiveResult.RemoteEndPoint;
-                byte[] dataBytes = udpReceiveResult.Buffer;
-                string data = Encoding.UTF8.GetString(dataBytes);
+                    IPEndPoint remoteEndPoint = udpReceiveResult.RemoteEndPoint;
+                    byte[] dataBytes = udpReceiveResult.Buffer;
+                    string data = Encoding.UTF8.GetString(dataBytes);
 
-                DataReceived?.Invoke(remoteEndPoint.Address.ToString(), data);
+                    DataReceived?.Invoke(remoteEndPoint.Address.ToString(), data);
+                }
             }
+            catch (SocketException) { } // UDP 통신 대기 상태 정지
         }
 
         public void Disconnect()

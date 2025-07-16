@@ -103,6 +103,7 @@ namespace CommSimulator
             {
                 if (TCPComboBox.Text == "Server")
                 {
+                    // TODO: IP 주소나 port 입력 안되는 경우 추가
                     if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
                     tcp_Server.DataReceived += Tcp_DataReceived;
                     tcp_Server.ClientConnected += Tcp_Connected;
@@ -129,7 +130,8 @@ namespace CommSimulator
             }
             else if (UDPCheckBox.Checked) // UDP
             {
-                if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
+                // TODO: IP 주소나 port 입력 안되는 경우 추가
+                if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text),int.Parse(UDPPortText.Text));
                 udp_Transceiver.DataReceived += Udp_DataReceived;
                 await udp_Transceiver.Connect();
             }
