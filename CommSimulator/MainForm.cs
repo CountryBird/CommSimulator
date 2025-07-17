@@ -105,19 +105,19 @@ namespace CommSimulator
             {
                 if (TCPComboBox.Text == "Server")
                 {
-                    if (CheckIPCondition(TCPIPAddressText.Text,TCPPortText.Text))
+                    if (CheckIPCondition(TCPIPAddressText.Text, TCPPortText.Text))
                     {
                         if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
                         tcp_Server.DataReceived += Tcp_DataReceived;
                         tcp_Server.ClientConnected += Tcp_Connected;
                         tcp_Server.ClientDisconnected += Tcp_Disconnected;
                         tcp_Server.ServerDisconnected += Tcp_Disconnected;
-                        await tcp_Server.Connect(); 
+                        await tcp_Server.Connect();
                     }
                 }
                 else if (TCPComboBox.Text == "Client")
                 {
-                    if (CheckIPCondition(TCPIPAddressText.Text,TCPPortText.Text))
+                    if (CheckIPCondition(TCPIPAddressText.Text, TCPPortText.Text))
                     {
                         try
                         {
@@ -131,17 +131,17 @@ namespace CommSimulator
                         catch (SocketException)
                         {
                             MessageBox.Show("해당 주소로 연결할 수 없습니다.");
-                        } 
+                        }
                     }
                 }
             }
             else if (UDPCheckBox.Checked) // UDP
             {
-                if (CheckIPCondition(UDPIPAddressText.Text,UDPPortText.Text))
+                if (CheckIPCondition(UDPIPAddressText.Text, UDPPortText.Text))
                 {
                     if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text));
                     udp_Transceiver.DataReceived += Udp_DataReceived;
-                    await udp_Transceiver.Connect(); 
+                    await udp_Transceiver.Connect();
                 }
             }
         }
@@ -236,17 +236,17 @@ namespace CommSimulator
 
         private bool CheckIPCondition(string ip, string port)
         {
-            if(!IPAddress.TryParse(ip, out _))
+            if (!IPAddress.TryParse(ip, out _))
             {
                 MessageBox.Show("IP가 주소 양식에 맞지 않습니다.");
                 return false;
             }
-            else if(!int.TryParse(port, out _))
+            else if (!int.TryParse(port, out _))
             {
                 MessageBox.Show("Port는 정수로 구성되어야 합니다.");
                 return false;
             }
-                return true;
+            return true;
         }
 
         private void SerialCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -256,7 +256,17 @@ namespace CommSimulator
 
         private void TCPCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            SendButton.Enabled= !TCPCheckBox.Checked;
+            SendButton.Enabled = !TCPCheckBox.Checked;
+        }
+
+        private void UDPCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            AnyAdressCheck.Enabled = UDPCheckBox.Checked;
+        }
+
+        private void AnyAdressCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            UDPIPAddressText.Text = AnyAdressCheck.Checked ? "0.0.0.0" : "IPAdress";
         }
     }
 }

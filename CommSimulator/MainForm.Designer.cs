@@ -35,6 +35,7 @@
             CommLayout = new TableLayoutPanel();
             panel4 = new Panel();
             UDPPanel = new Panel();
+            AnyAdressCheck = new CheckBox();
             UDPCheckBox = new CheckBox();
             UDPPortText = new TextBox();
             UDPIPAddressText = new TextBox();
@@ -125,6 +126,7 @@
             // UDPPanel
             // 
             UDPPanel.BorderStyle = BorderStyle.FixedSingle;
+            UDPPanel.Controls.Add(AnyAdressCheck);
             UDPPanel.Controls.Add(UDPCheckBox);
             UDPPanel.Controls.Add(UDPPortText);
             UDPPanel.Controls.Add(UDPIPAddressText);
@@ -135,6 +137,18 @@
             UDPPanel.Size = new Size(298, 188);
             UDPPanel.TabIndex = 2;
             // 
+            // AnyAdressCheck
+            // 
+            AnyAdressCheck.AutoSize = true;
+            AnyAdressCheck.Enabled = false;
+            AnyAdressCheck.Location = new Point(131, 50);
+            AnyAdressCheck.Name = "AnyAdressCheck";
+            AnyAdressCheck.Size = new Size(93, 19);
+            AnyAdressCheck.TabIndex = 12;
+            AnyAdressCheck.Text = "Any Address";
+            AnyAdressCheck.UseVisualStyleBackColor = true;
+            AnyAdressCheck.CheckedChanged += AnyAdressCheck_CheckedChanged;
+            // 
             // UDPCheckBox
             // 
             UDPCheckBox.AutoSize = true;
@@ -143,6 +157,7 @@
             UDPCheckBox.Size = new Size(15, 14);
             UDPCheckBox.TabIndex = 5;
             UDPCheckBox.UseVisualStyleBackColor = true;
+            UDPCheckBox.CheckedChanged += UDPCheckBox_CheckedChanged;
             // 
             // UDPPortText
             // 
@@ -349,5 +364,6 @@
         private TextBox UDPPortText;
         private TextBox UDPIPAddressText;
         private CheckBox UDPCheckBox;
+        private CheckBox AnyAdressCheck;
     }
 }
