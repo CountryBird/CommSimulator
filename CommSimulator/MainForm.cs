@@ -37,7 +37,7 @@ namespace CommSimulator
                         else
                         {
                             serialConnector.Send(DataText.Text);
-                            TextBox.AppendText("[S] " + DataText.Text + Environment.NewLine);
+                            UpdateTextBox("[S] " + DataText.Text);
                         }
                     }
                     catch (IOException)
@@ -93,11 +93,13 @@ namespace CommSimulator
                             serialConnector.Connect();
 
                             SendButton.Enabled = true;
+                            UpdateTextBox($"[{PortNameText.Text}]에 연결됨");
                         }
                     }
                     catch (IOException)
                     {
                         MessageBox.Show("해당 COM 포트가 연결되어 있지 않습니다.");
+                        serialConnector = null;
                     }
                 }
             }
@@ -141,15 +143,10 @@ namespace CommSimulator
                 {
                     if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text));
                     udp_Transceiver.DataReceived += Udp_DataReceived;
+                    UpdateTextBox($"[{UDPIPAddressText.Text}]에서 수신 데이터 대기 중");
                     await udp_Transceiver.Connect();
                 }
             }
-        }
-
-        private void Tcp_Connected(string remoteEndPoint)
-        {
-            UpdateTextBox($"[{remoteEndPoint}]에 연결됨");
-            SendButton.Enabled = true;
         }
 
         private void DisconnectButton_Click(object sender, EventArgs e)
@@ -159,6 +156,8 @@ namespace CommSimulator
                 if (serialConnector != null && serialConnector.IsOpen())
                 {
                     serialConnector.DisConnect();
+                    serialConnector = null;
+                    UpdateTextBox("연결 해제됨");
                 }
             }
             else if (TCPCheckBox.Checked) // TCP
@@ -182,6 +181,13 @@ namespace CommSimulator
                     udp_Transceiver = null;
                 }
             }
+        }
+
+        #region 이벤트
+        private void Tcp_Connected(string remoteEndPoint)
+        {
+            UpdateTextBox($"[{remoteEndPoint}]에 연결됨");
+            SendButton.Enabled = true;
         }
 
         private void Tcp_Disconnected(string remoteEndPoint)
@@ -208,6 +214,8 @@ namespace CommSimulator
             UpdateTextBox($"[R] [{remoteEndPoint}] {receivedData}");
         }
 
+        #endregion
+
         private void UpdateTextBox(string data)
         {
             if (TextBox.InvokeRequired)
@@ -219,7 +227,8 @@ namespace CommSimulator
                 TextBox.AppendText(data + Environment.NewLine);
         }
 
-        private bool CheckSerialCondition(string portName, string baudRate)
+        #region 주소 조건
+        private bool CheckSerialCondition(string portName, string baudRate) // TODO: 이미 점유 중이 port를 사용하는 예외 처리
         {
             if (!Regex.IsMatch(portName, @"^COM\d+$")) // COM으로 시작하고 숫자로 긑남
             {
@@ -249,6 +258,8 @@ namespace CommSimulator
             return true;
         }
 
+        #endregion
+
         private void SerialCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             SendButton.Enabled = !SerialCheckBox.Checked;
@@ -267,6 +278,15 @@ namespace CommSimulator
         private void AnyAdressCheck_CheckedChanged(object sender, EventArgs e)
         {
             UDPIPAddressText.Text = AnyAdressCheck.Checked ? "0.0.0.0" : "IPAdress";
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if(keyData == Keys.Escape)
+            {
+                this.Close();
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
     }
 }
