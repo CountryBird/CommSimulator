@@ -35,7 +35,7 @@ namespace UDP
 
                     IPEndPoint remoteEndPoint = udpReceiveResult.RemoteEndPoint;
                     byte[] dataBytes = udpReceiveResult.Buffer;
-                    string data = Encoding.UTF8.GetString(dataBytes);
+                    string data = Encoding.UTF8.GetString(dataBytes).Trim('\0');
 
                     DataReceived?.Invoke(remoteEndPoint.Address.ToString(), data);
                 }

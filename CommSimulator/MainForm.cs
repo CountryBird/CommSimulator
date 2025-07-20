@@ -73,9 +73,19 @@ namespace CommSimulator
             }
             else if (UDPCheckBox.Checked) // UDP
             {
-                if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
-                await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text), DataText.Text);
-                UpdateTextBox($"[S] [{UDPIPAddressText.Text}] " + DataText.Text);
+                if (CheckIPCondition(UDPIPAddressText.Text,UDPPortText.Text))
+                {
+                    if (UDPIPAddressText.Text != "0.0.0.0")
+                    {
+                        if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
+                        await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text), DataText.Text);
+                        UpdateTextBox($"[S] [{UDPIPAddressText.Text}] " + DataText.Text);
+                    }
+                    else
+                    {
+                        MessageBox.Show("0.0.0.0 은 목적지 주소로 사용할 수 없습니다.");
+                    }
+                }
             }
         }
         private async void ConnectButton_Click(object sender, EventArgs e)
@@ -142,9 +152,13 @@ namespace CommSimulator
                 if (CheckIPCondition(UDPIPAddressText.Text, UDPPortText.Text))
                 {
                     if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text));
-                    udp_Transceiver.DataReceived += Udp_DataReceived;
-                    UpdateTextBox($"[{UDPIPAddressText.Text}]에서 수신 데이터 대기 중");
-                    await udp_Transceiver.Connect();
+
+                    if (!udp_Transceiver.isConnected())
+                    {
+                        udp_Transceiver.DataReceived += Udp_DataReceived;
+                        UpdateTextBox($"[{UDPIPAddressText.Text}]에서 수신 데이터 대기 중");
+                        await udp_Transceiver.Connect();
+                    }
                 }
             }
         }
@@ -179,6 +193,7 @@ namespace CommSimulator
                 {
                     udp_Transceiver.Disconnect();
                     udp_Transceiver = null;
+                    UpdateTextBox("수신 데이터 대기 중지");
                 }
             }
         }
