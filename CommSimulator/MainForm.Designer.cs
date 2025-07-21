@@ -33,7 +33,9 @@
             DataText = new TextBox();
             TextBox = new TextBox();
             CommLayout = new TableLayoutPanel();
-            panel4 = new Panel();
+            CommSettingPanel = new Panel();
+            LoopCheckBox = new CheckBox();
+            LoopDelayTime = new NumericUpDown();
             UDPPanel = new Panel();
             AnyAdressCheck = new CheckBox();
             UDPCheckBox = new CheckBox();
@@ -54,6 +56,8 @@
             ConnectButton = new Button();
             DisconnectButton = new Button();
             CommLayout.SuspendLayout();
+            CommSettingPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)LoopDelayTime).BeginInit();
             UDPPanel.SuspendLayout();
             TCPPanel.SuspendLayout();
             SerialPanel.SuspendLayout();
@@ -103,7 +107,7 @@
             CommLayout.ColumnCount = 2;
             CommLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
             CommLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
-            CommLayout.Controls.Add(panel4, 1, 1);
+            CommLayout.Controls.Add(CommSettingPanel, 1, 1);
             CommLayout.Controls.Add(UDPPanel, 0, 1);
             CommLayout.Controls.Add(TCPPanel, 1, 0);
             CommLayout.Controls.Add(SerialPanel, 0, 0);
@@ -116,12 +120,36 @@
             CommLayout.Size = new Size(608, 388);
             CommLayout.TabIndex = 9;
             // 
-            // panel4
+            // CommSettingPanel
             // 
-            panel4.Location = new Point(307, 197);
-            panel4.Name = "panel4";
-            panel4.Size = new Size(200, 100);
-            panel4.TabIndex = 3;
+            CommSettingPanel.Controls.Add(LoopCheckBox);
+            CommSettingPanel.Controls.Add(LoopDelayTime);
+            CommSettingPanel.Dock = DockStyle.Fill;
+            CommSettingPanel.Location = new Point(307, 197);
+            CommSettingPanel.Name = "CommSettingPanel";
+            CommSettingPanel.Size = new Size(298, 188);
+            CommSettingPanel.TabIndex = 3;
+            // 
+            // LoopCheckBox
+            // 
+            LoopCheckBox.AutoSize = true;
+            LoopCheckBox.Location = new Point(26, 27);
+            LoopCheckBox.Name = "LoopCheckBox";
+            LoopCheckBox.Size = new Size(53, 19);
+            LoopCheckBox.TabIndex = 1;
+            LoopCheckBox.Text = "Loop";
+            LoopCheckBox.UseVisualStyleBackColor = true;
+            LoopCheckBox.CheckedChanged += LoopCheckBox_CheckedChanged;
+            // 
+            // LoopDelayTime
+            // 
+            LoopDelayTime.Enabled = false;
+            LoopDelayTime.Increment = new decimal(new int[] { 100, 0, 0, 0 });
+            LoopDelayTime.Location = new Point(85, 26);
+            LoopDelayTime.Maximum = new decimal(new int[] { 10000, 0, 0, 0 });
+            LoopDelayTime.Name = "LoopDelayTime";
+            LoopDelayTime.Size = new Size(60, 23);
+            LoopDelayTime.TabIndex = 0;
             // 
             // UDPPanel
             // 
@@ -329,6 +357,9 @@
             Name = "MainForm";
             Text = "CommSimulator";
             CommLayout.ResumeLayout(false);
+            CommSettingPanel.ResumeLayout(false);
+            CommSettingPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)LoopDelayTime).EndInit();
             UDPPanel.ResumeLayout(false);
             UDPPanel.PerformLayout();
             TCPPanel.ResumeLayout(false);
@@ -345,7 +376,7 @@
         private TextBox DataText;
         private TextBox TextBox;
         private TableLayoutPanel CommLayout;
-        private Panel panel4;
+        private Panel CommSettingPanel;
         private Panel UDPPanel;
         private Panel TCPPanel;
         private Panel SerialPanel;
@@ -365,5 +396,7 @@
         private TextBox UDPIPAddressText;
         private CheckBox UDPCheckBox;
         private CheckBox AnyAdressCheck;
+        private NumericUpDown LoopDelayTime;
+        private CheckBox LoopCheckBox;
     }
 }

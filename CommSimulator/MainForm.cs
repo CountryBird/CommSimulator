@@ -29,16 +29,22 @@ namespace CommSimulator
                 {
                     try
                     {
-                        if (serialConnector == null) serialConnector = new Serial_Connector(PortNameText.Text, int.Parse(BaudRateText.Text), Parity.None, 8, StopBits.One);
-                        if (!serialConnector.IsOpen())
+                        do
                         {
-                            MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
-                        }
-                        else
-                        {
-                            serialConnector.Send(DataText.Text);
-                            UpdateTextBox("[S] " + DataText.Text);
-                        }
+                            if (serialConnector == null) serialConnector = new Serial_Connector(PortNameText.Text, int.Parse(BaudRateText.Text), Parity.None, 8, StopBits.One);
+                            if (!serialConnector.IsOpen())
+                            {
+                                MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
+                            }
+                            else
+                            {
+                                serialConnector.Send(DataText.Text);
+                                UpdateTextBox("[S] " + DataText.Text);
+                            }
+
+                            await Task.Delay((int)LoopDelayTime.Value);
+
+                        } while (LoopCheckBox.Checked);
                     }
                     catch (IOException)
                     {
@@ -50,41 +56,59 @@ namespace CommSimulator
             {
                 if (TCPComboBox.Text == "Server")
                 {
-                    if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
-                    if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
-
-                    else
+                    do
                     {
-                        await tcp_Server.Send(DataText.Text);
-                        UpdateTextBox($"[S] [{TCPIPAddressText.Text}] " + DataText.Text);
-                    }
+                        if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
+                        //if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
+
+                        else
+                        {
+                            await tcp_Server.Send(DataText.Text);
+                            UpdateTextBox($"[S] [{TCPIPAddressText.Text}] " + DataText.Text);
+                        }
+
+                        await Task.Delay((int)LoopDelayTime.Value);
+
+                    } while (LoopCheckBox.Checked);
                 }
                 else if (TCPComboBox.Text == "Client")
                 {
-                    if (tcp_Client == null) tcp_Client = new TCP_Client();
-                    if (!tcp_Client.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
-
-                    else
+                    do
                     {
-                        await tcp_Client.Send(DataText.Text);
-                        UpdateTextBox($"[S] [{tcp_Client.GetLocalIPAddress()}] " + DataText.Text);
-                    }
+                        if (tcp_Client == null) tcp_Client = new TCP_Client();
+                        //if (!tcp_Client.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
+
+                        else
+                        {
+                            await tcp_Client.Send(DataText.Text);
+                            UpdateTextBox($"[S] [{tcp_Client.GetLocalIPAddress()}] " + DataText.Text);
+                        }
+
+                        await Task.Delay((int)LoopDelayTime.Value);
+
+                    } while (LoopCheckBox.Checked);
                 }
             }
             else if (UDPCheckBox.Checked) // UDP
             {
-                if (CheckIPCondition(UDPIPAddressText.Text,UDPPortText.Text))
+                if (CheckIPCondition(UDPIPAddressText.Text, UDPPortText.Text))
                 {
-                    if (UDPIPAddressText.Text != "0.0.0.0")
+                    do
                     {
-                        if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
-                        await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text), DataText.Text);
-                        UpdateTextBox($"[S] [{UDPIPAddressText.Text}] " + DataText.Text);
-                    }
-                    else
-                    {
-                        MessageBox.Show("0.0.0.0 은 목적지 주소로 사용할 수 없습니다.");
-                    }
+                        if (UDPIPAddressText.Text != "0.0.0.0")
+                        {
+                            if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver();
+                            await udp_Transceiver.Send(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text), DataText.Text);
+                            UpdateTextBox($"[S] [{UDPIPAddressText.Text}] " + DataText.Text);
+                        }
+                        else
+                        {
+                            MessageBox.Show("0.0.0.0 은 목적지 주소로 사용할 수 없습니다.");
+                        }
+
+                        await Task.Delay((int)LoopDelayTime.Value);
+
+                    } while (LoopCheckBox.Checked);
                 }
             }
         }
@@ -297,11 +321,16 @@ namespace CommSimulator
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if(keyData == Keys.Escape)
+            if (keyData == Keys.Escape)
             {
                 this.Close();
             }
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void LoopCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            LoopDelayTime.Enabled = LoopCheckBox.Checked;
         }
     }
 }
