@@ -325,6 +325,10 @@ namespace CommSimulator
             {
                 this.Close();
             }
+            else if (keyData == (Keys.C | Keys.Alt))
+            {
+                TextBox.Clear();
+            }
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
