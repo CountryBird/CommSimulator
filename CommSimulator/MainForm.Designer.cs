@@ -37,6 +37,7 @@
             LoopCheckBox = new CheckBox();
             LoopDelayTime = new NumericUpDown();
             UDPPanel = new Panel();
+            BroadcastCheck = new CheckBox();
             AnyAdressCheck = new CheckBox();
             UDPCheckBox = new CheckBox();
             UDPPortText = new TextBox();
@@ -154,6 +155,7 @@
             // UDPPanel
             // 
             UDPPanel.BorderStyle = BorderStyle.FixedSingle;
+            UDPPanel.Controls.Add(BroadcastCheck);
             UDPPanel.Controls.Add(AnyAdressCheck);
             UDPPanel.Controls.Add(UDPCheckBox);
             UDPPanel.Controls.Add(UDPPortText);
@@ -164,6 +166,18 @@
             UDPPanel.Name = "UDPPanel";
             UDPPanel.Size = new Size(298, 188);
             UDPPanel.TabIndex = 2;
+            // 
+            // BroadcastCheck
+            // 
+            BroadcastCheck.AutoSize = true;
+            BroadcastCheck.Enabled = false;
+            BroadcastCheck.Location = new Point(131, 75);
+            BroadcastCheck.Name = "BroadcastCheck";
+            BroadcastCheck.Size = new Size(78, 19);
+            BroadcastCheck.TabIndex = 13;
+            BroadcastCheck.Text = "Broadcast";
+            BroadcastCheck.UseVisualStyleBackColor = true;
+            BroadcastCheck.CheckedChanged += BroadcastCheck_CheckedChanged;
             // 
             // AnyAdressCheck
             // 
@@ -398,5 +412,6 @@
         private CheckBox AnyAdressCheck;
         private NumericUpDown LoopDelayTime;
         private CheckBox LoopCheckBox;
+        private CheckBox BroadcastCheck;
     }
 }

@@ -59,7 +59,6 @@ namespace CommSimulator
                     do
                     {
                         if (tcp_Server == null) tcp_Server = new TCP_Server(IPAddress.Parse(TCPIPAddressText.Text), int.Parse(TCPPortText.Text));
-                        //if (!tcp_Server.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
 
                         else
                         {
@@ -76,7 +75,6 @@ namespace CommSimulator
                     do
                     {
                         if (tcp_Client == null) tcp_Client = new TCP_Client();
-                        //if (!tcp_Client.IsConnected()) MessageBox.Show("Send 작업 이전에 Connect가 필요합니다.");
 
                         else
                         {
@@ -175,13 +173,22 @@ namespace CommSimulator
             {
                 if (CheckIPCondition(UDPIPAddressText.Text, UDPPortText.Text))
                 {
-                    if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text));
-
-                    if (!udp_Transceiver.isConnected())
+                    if (UDPIPAddressText.Text != "255.255.255.255")
                     {
-                        udp_Transceiver.DataReceived += Udp_DataReceived;
-                        UpdateTextBox($"[{UDPIPAddressText.Text}]에서 수신 데이터 대기 중");
-                        await udp_Transceiver.Connect();
+                        if (udp_Transceiver == null) udp_Transceiver = new UDP_Transceiver(IPAddress.Parse(UDPIPAddressText.Text), int.Parse(UDPPortText.Text));
+
+                        if (!udp_Transceiver.isConnected())
+                        {
+                            {
+                                udp_Transceiver.DataReceived += Udp_DataReceived;
+                                UpdateTextBox($"[{UDPIPAddressText.Text}]에서 수신 데이터 대기 중");
+                                await udp_Transceiver.Connect();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("255.255.255.255는 바인딩 주소로 사용할 수 없습니다.");
                     }
                 }
             }
@@ -312,6 +319,7 @@ namespace CommSimulator
         private void UDPCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             AnyAdressCheck.Enabled = UDPCheckBox.Checked;
+            BroadcastCheck.Enabled = UDPCheckBox.Checked;
         }
 
         private void AnyAdressCheck_CheckedChanged(object sender, EventArgs e)
@@ -335,6 +343,11 @@ namespace CommSimulator
         private void LoopCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             LoopDelayTime.Enabled = LoopCheckBox.Checked;
+        }
+
+        private void BroadcastCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            UDPIPAddressText.Text = BroadcastCheck.Checked ? "255.255.255.255" : "IPAdress";
         }
     }
 }
