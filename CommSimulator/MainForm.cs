@@ -1,5 +1,5 @@
 using Serial;
-using System.Diagnostics;
+using CommSimulator;
 using System.IO.Ports;
 using System.Net;
 using System.Net.Sockets;
@@ -348,6 +348,12 @@ namespace CommSimulator
         private void BroadcastCheck_CheckedChanged(object sender, EventArgs e)
         {
             UDPIPAddressText.Text = BroadcastCheck.Checked ? "255.255.255.255" : "IPAdress";
+        }
+
+        private void ColorTheme_CheckedChanged(object sender, EventArgs e)
+        {
+            ThemeColors.ApplyTheme(this,ColorTheme.Checked);
+            ColorTheme.Text = ColorTheme.Checked ? "DarkMode" : "LightMode";
         }
     }
 }

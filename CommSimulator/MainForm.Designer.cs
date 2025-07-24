@@ -34,6 +34,7 @@
             TextBox = new TextBox();
             CommLayout = new TableLayoutPanel();
             CommSettingPanel = new Panel();
+            ColorTheme = new CheckBox();
             LoopCheckBox = new CheckBox();
             LoopDelayTime = new NumericUpDown();
             UDPPanel = new Panel();
@@ -123,6 +124,7 @@
             // 
             // CommSettingPanel
             // 
+            CommSettingPanel.Controls.Add(ColorTheme);
             CommSettingPanel.Controls.Add(LoopCheckBox);
             CommSettingPanel.Controls.Add(LoopDelayTime);
             CommSettingPanel.Dock = DockStyle.Fill;
@@ -130,6 +132,18 @@
             CommSettingPanel.Name = "CommSettingPanel";
             CommSettingPanel.Size = new Size(298, 188);
             CommSettingPanel.TabIndex = 3;
+            // 
+            // ColorTheme
+            // 
+            ColorTheme.Appearance = Appearance.Button;
+            ColorTheme.AutoSize = true;
+            ColorTheme.Location = new Point(26, 65);
+            ColorTheme.Name = "ColorTheme";
+            ColorTheme.Size = new Size(75, 25);
+            ColorTheme.TabIndex = 2;
+            ColorTheme.Text = "LightMode";
+            ColorTheme.UseVisualStyleBackColor = true;
+            ColorTheme.CheckedChanged += ColorTheme_CheckedChanged;
             // 
             // LoopCheckBox
             // 
@@ -249,6 +263,7 @@
             TCPComboBox.Name = "TCPComboBox";
             TCPComboBox.Size = new Size(121, 23);
             TCPComboBox.TabIndex = 5;
+            TCPComboBox.Text = "Server";
             // 
             // TCPCheckBox
             // 
@@ -413,5 +428,6 @@
         private NumericUpDown LoopDelayTime;
         private CheckBox LoopCheckBox;
         private CheckBox BroadcastCheck;
+        private CheckBox ColorTheme;
     }
 }
